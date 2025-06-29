@@ -1,0 +1,91 @@
+/* --- Estilos Generales y Layout --- */
+body {
+    /* Usamos flexbox para crear el layout de sidebar + contenido */
+    display: flex;
+    margin: 0;
+    font-family: sans-serif;
+    background-color: #f4f7f6; /* Color de fondo para el área de contenido */
+}
+
+/* --- Estilos para el Sidebar --- */
+.sidebar {
+    /* Dimensiones y color */
+    width: 260px; /* Ancho fijo del sidebar */
+    height: 100vh; /* Ocupa el 100% de la altura de la pantalla */
+    background-color: #2c3e50; /* Un color oscuro y profesional */
+    color: white; /* Color del texto */
+    
+    /* Flexbox para ordenar los elementos internos verticalmente */
+    display: flex;
+    flex-direction: column;
+    
+    /* Espaciado interno */
+    padding: 20px 15px;
+}
+
+/* --- Sección del Perfil (Círculo y Nombre) --- */
+.sidebar .perfil {
+    text-align: center; /* Centra la imagen y el nombre */
+    margin-bottom: 25px; /* Espacio debajo de la sección de perfil */
+}
+
+.sidebar .foto-perfil {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%; /* Esto crea el círculo perfecto */
+    border: 3px solid #3498db; /* Un borde azul para destacar */
+    margin-bottom: 10px;
+}
+
+.sidebar .perfil h5 {
+    margin: 0;
+    font-weight: 500;
+}
+
+/* --- Estilos para los Enlaces de Navegación (Botones) --- */
+.sidebar > a {
+    display: block; /* Ocupa todo el ancho disponible */
+    background-color: #34495e; /* Color de fondo del botón */
+    color: white;
+    padding: 12px 15px;
+    margin-bottom: 8px; /* Espacio entre los botones */
+    text-decoration: none; /* Quita el subrayado */
+    border-radius: 5px; /* Bordes ligeramente redondeados */
+    transition: background-color 0.3s ease; /* Transición suave al pasar el mouse */
+}
+
+/* Efecto al pasar el mouse sobre los botones */
+.sidebar > a:hover {
+    background-color: #3498db; /* Cambia a un color azul brillante */
+    color: white;
+}
+
+/* --- Estilo para el botón de Cerrar Sesión --- */
+.sidebar .cerrar-sesion {
+    /* ¡Magia! Esto empuja el div al final del sidebar */
+    margin-top: auto; 
+}
+
+.sidebar .cerrar-sesion a {
+    display: block;
+    background-color: transparent; /* Fondo transparente */
+    border: 1px solid #e74c3c; /* Borde rojo para indicar "salida" */
+    color: #e74c3c;
+    padding: 10px 15px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar .cerrar-sesion a:hover {
+    background-color: #e74c3c; /* El fondo se vuelve rojo */
+    color: white; /* El texto se vuelve blanco */
+}
+
+/* --- Estilos para el Contenido Principal --- */
+.content {
+    /* Ocupa todo el espacio restante */
+    flex-grow: 1; 
+    padding: 30px;
+}

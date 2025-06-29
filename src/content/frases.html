@@ -1,0 +1,77 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">Frases Motivacionales</h3>
+    <button id="nuevaFraseBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalFrase">
+      <i class="bi bi-plus-circle"></i> Nueva Frase
+    </button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle shadow-sm">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Frase</th>
+          <th>Autor</th>
+          <th>Fecha de Creación</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>"El éxito es la suma de pequeños esfuerzos repetidos cada día."</td>
+          <td>Robert Collier</td>
+          <td>2024-06-26</td>
+          <td><span class="badge bg-success">Activo</span></td>
+          <td>
+            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#modalFrase"
+              onclick="cargarDatosFrase(1, 'El éxito es la suma de pequeños esfuerzos repetidos cada día.', 'Robert Collier', '1')">
+              <i class="bi bi-pencil-square"></i> Editar
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="eliminarFrase(1)">
+              <i class="bi bi-trash-fill"></i> Eliminar
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalFrase" tabindex="-1" aria-labelledby="modalFraseLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalFraseLabel">Nueva Frase</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formFrase">
+          <input type="hidden" id="idFrase">
+          <div class="mb-3">
+            <label for="fraseTexto" class="form-label">Frase</label>
+            <textarea class="form-control" id="fraseTexto" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="autorFrase" class="form-label">Autor</label>
+            <input type="text" class="form-control" id="autorFrase" placeholder="Ej: Anónimo">
+          </div>
+          <div class="mb-3">
+            <label for="estadoFrase" class="form-label">Estado</label>
+            <select class="form-select" id="estadoFrase">
+              <option value="1">Activo</option>
+              <option value="0">Inactivo</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button id="guardarFraseBtn" class="btn btn-primary">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+</div>

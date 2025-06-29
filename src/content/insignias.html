@@ -1,0 +1,96 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">Gestión de Insignias</h3>
+    <button id="nuevaInsigniaBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalInsignia">
+      <i class="bi bi-plus-circle"></i> Nueva Insignia
+    </button>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover align-middle shadow-sm">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Descripción</th>
+          <th>Criterio</th>
+          <th>Icono</th>
+          <th>Fecha de creación</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Constancia</td>
+          <td>5 días seguidos</td>
+          <td>Completar 5 días</td>
+          <td><img src="https://via.placeholder.com/30" alt="icono" width="30"></td>
+          <td>2024-06-26</td>
+          <td><span class="badge bg-success">Activo</span></td>
+          <td>
+            <button class="btn btn-sm btn-warning"
+              data-bs-toggle="modal"
+              data-bs-target="#modalInsignia"
+              onclick="cargarDatosInsignia(1, 'Constancia', '5 días seguidos', 'Completar 5 días', 'https://tse2.mm.bing.net/th/id/OIP.6VjtW5qq_WS-O_rtMuEOPwHaHa?r=0&rs=1&pid=ImgDetMain', '1')">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="eliminarInsignia(1)">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalInsignia" tabindex="-1" aria-labelledby="modalInsigniaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalInsigniaLabel">Nueva Insignia</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formInsignia">
+          <input type="hidden" id="idInsignia">
+          <div class="mb-3">
+            <label for="nombreInsignia" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombreInsignia" required>
+          </div>
+          <div class="mb-3">
+            <label for="descripcionInsignia" class="form-label">Descripción</label>
+            <input type="text" class="form-control" id="descripcionInsignia" required>
+          </div>
+          <div class="mb-3">
+            <label for="criterioInsignia" class="form-label">Criterio de asignación</label>
+            <input type="text" class="form-control" id="criterioInsignia" required>
+          </div>
+          <div class="mb-3">
+            <label for="iconoInsignia" class="form-label">URL del icono</label>
+            <input type="text" class="form-control" id="iconoInsignia">
+          </div>
+          <div class="mb-3">
+            <label for="estadoInsignia" class="form-label">Estado</label>
+            <select class="form-select" id="estadoInsignia">
+              <option value="1">Activo</option>
+              <option value="0">Inactivo</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button id="guardarInsigniaBtn" class="btn btn-primary">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/
