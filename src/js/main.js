@@ -1,17 +1,28 @@
-// PROTEGER el acceso si no hay token
-const token = localStorage.getItem('token');
-if (!token) {
-    window.location.href = '../html/login.html';
+const usuarioString = localStorage.getItem('usuario');
+
+let usuario = null;
+if (usuarioString) {
+  try {
+    usuario = JSON.parse(usuarioString); // Intentar parsear el JSON
+  } catch (error) {
+    console.error("Error al parsear el usuario:", error);
+    // Aquí puedes asignar un valor predeterminado o manejar el error como desees
+    usuario = {}; // Asignar un objeto vacío o manejar el error de otra forma
+  }
+} else {
+  console.warn("No se encontró el objeto 'usuario' en localStorage.");
 }
 
-// Mostrar correo del usuario (si quieres)
-const usuario = JSON.parse(localStorage.getItem('usuario'));
-if (usuario) {
-    const perfilElem = document.querySelector('.perfil h5');
-    if (perfilElem) {
-        perfilElem.textContent = usuario.correo;
-    }
+if (usuario && usuario.correo) {
+  const perfilElem = document.querySelector('.perfil h5');
+  if (perfilElem) {
+    perfilElem.textContent = usuario.correo;  // Mostrar el correo si el usuario existe
+  }
+} else {
+  console.error("El usuario no está definido o tiene valores inválidos.");
 }
+
+
 
 function cargarModulo(modulo) {
   const moduloDiv = document.getElementById("modulo");
