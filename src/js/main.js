@@ -13,32 +13,35 @@ if (usuario) {
     }
 }
 
-// Función para cargar los módulos dinámicamente
-function cargarModulo(nombre) {
-    const ruta = `../content/${nombre}.html`;
-    fetch(ruta)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error ${response.status}`);
-            }
-            return response.text();
-        })
-        .then(data => {
-            const moduloElem = document.getElementById('modulo');
-            if (moduloElem) {
-                moduloElem.innerHTML = data;
-            } else {
-                console.error("Elemento con id 'modulo' no encontrado.");
-            }
-        })
-        .catch(error => {
-            const moduloElem = document.getElementById('modulo');
-            if (moduloElem) {
-                moduloElem.innerHTML = "<p>Error al cargar el módulo.</p>";
-            }
-            console.error("Error al cargar módulo:", error);
-        });
+function cargarModulo(modulo) {
+  const moduloDiv = document.getElementById("modulo");
+
+  fetch(`../content/${modulo}.html`)
+    .then(res => {
+      if (!res.ok) throw new Error("No se pudo cargar el módulo");
+      return res.text();
+    })
+    .then(html => {
+      moduloDiv.innerHTML = html;
+
+      // Eliminar cualquier script anterior
+      const oldScript = document.getElementById("scriptModulo");
+      if (oldScript) oldScript.remove();
+
+      // Cargar el script asociado dinámicamente
+      const script = document.createElement("script");
+      script.type = "module";
+      script.id = "scriptModulo";
+      script.src = `../js/${modulo}.js`;
+      document.body.appendChild(script);
+    })
+    .catch(err => {
+      console.error("Error al cargar módulo:", err);
+      moduloDiv.innerHTML = `<p>Error al cargar el módulo.</p>`;
+    });
 }
+
+
 
 function cerrarSesion() {
   localStorage.removeItem("token");

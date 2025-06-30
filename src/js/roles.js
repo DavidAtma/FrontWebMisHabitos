@@ -1,69 +1,50 @@
-document.addEventListener('DOMContentLoaded', () => {
-  prepararEventosRoles();
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("roles.js cargado ✅");
+  cargarRoles();
 });
 
-function prepararEventosRoles() {
-  // Nuevo Rol
-  const btnNuevo = document.getElementById("nuevoRolBtn");
-  if (btnNuevo) {
-    btnNuevo.addEventListener("click", () => {
-      document.getElementById("idRol").value = "";
-      document.getElementById("nombreRol").value = "";
-      document.getElementById("estadoRol").value = "1";
-      document.getElementById("modalEditarRolLabel").innerText = "Nuevo Rol";
+async function cargarRoles() {
+  const token = localStorage.getItem("token");
+  const tablaBody = document.getElementById("tablaRolesBody");
+  tablaBody.innerHTML = "";
+
+  try {
+    const response = await fetch("http://localhost:3000/api/v1/roles", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
-  }
 
-  // Guardar cambios
-  const btnGuardar = document.getElementById("guardarRolBtn");
-  if (btnGuardar) {
-    btnGuardar.addEventListener("click", () => {
-      const id = document.getElementById("idRol").value;
-      const nombre = document.getElementById("nombreRol").value;
-      const estado = document.getElementById("estadoRol").value;
+    const json = await response.json();
+    console.log("Respuesta del backend:", json); // 👈 Verifica si llega la data
 
-      console.log(`Rol ${id ? "actualizado" : "creado"}: ${nombre} (${estado})`);
-      mostrarToast("Rol guardado correctamente");
+    if (!json.success) {
+      throw new Error(json.message || "No se pudo obtener roles");
+    }
 
-      const modal = bootstrap.Modal.getInstance(document.getElementById("modalEditarRol"));
-      modal.hide();
+    json.data.forEach((rol) => {
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${rol.id_rol}</td>
+        <td>${rol.nombre}</td>
+        <td>${rol.fecha_creacion?.split("T")[0]}</td>
+        <td>
+          <span class="badge ${rol.estado ? 'bg-success' : 'bg-danger'}">
+            ${rol.estado ? 'Activo' : 'Inactivo'}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-warning btn-sm">Editar</button>
+          <button class="btn btn-danger btn-sm">Eliminar</button>
+        </td>
+      `;
+      tablaBody.appendChild(fila);
     });
+
+  } catch (error) {
+    console.error("Error al cargar roles:", error);
+    const filaError = document.createElement("tr");
+    filaError.innerHTML = `<td colspan="5" class="text-danger">Error al cargar los datos.</td>`;
+    tablaBody.appendChild(filaError);
   }
-}
-
-// Función para cargar datos en el formulario
-function cargarDatosRol(id, nombre, estado) {
-  document.getElementById("idRol").value = id;
-  document.getElementById("nombreRol").value = nombre;
-  document.getElementById("estadoRol").value = estado;
-  document.getElementById("modalEditarRolLabel").innerText = "Editar Rol";
-}
-
-// Función para eliminar un rol
-function eliminarRol(id) {
-  const confirmar = confirm(`¿Seguro que deseas eliminar el rol con ID ${id}?`);
-  if (confirmar) {
-    console.log("Rol eliminado:", id);
-    mostrarToast("Rol eliminado");
-  }
-}
-
-// Función para mostrar un toast
-function mostrarToast(mensaje) {
-  const toast = document.createElement("div");
-  toast.className = "toast align-items-center text-white bg-success border-0 show position-fixed bottom-0 end-0 m-3";
-  toast.setAttribute("role", "alert");
-
-  toast.innerHTML = `
-    <div class="d-flex">
-      <div class="toast-body">${mensaje}</div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-    </div>
-  `;
-
-  document.body.appendChild(toast);
-
-  setTimeout(() => {
-    toast.remove();
-  }, 3000);
 }
