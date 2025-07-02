@@ -74,12 +74,6 @@ Todos los datos se obtienen en tiempo real desde la API del backend.
 
 ---
 
-## ⚙️ ¿Cómo ejecutar este proyecto?
+## 🎥 LINK DEL VIDEO DEMO
 
-1. Clona el repositorio:
-
-```bash
-git clone https://github.com/TuUsuario/HabitFlow-BackOffice.git
-
-🎥 LINK DEL VIDEO DEMO
 https://drive.google.com/file/d/1-graPsizqE-hpCsmPLuwg6qYQsJrOsaG/view?usp=sharing
