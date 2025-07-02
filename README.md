@@ -73,7 +73,16 @@ Se incorpora una sección de reportes interactivos generados con **Chart.js**, q
 Todos los datos se obtienen en tiempo real desde la API del backend.
 
 ---
+## 🧩 ¿En qué colaboró cada integrante del equipo?
+
+- **Cristian Albarracín Champac**: Desarrollo de la lógica del sistema y diseño estructural del frontend y backend.
+- **David Allcca Valenzuela**: Implementación funcional del frontend y backend, incluyendo integración con API REST.
+- **José Guerrero Seijas**: Desarrollo y optimización de la lógica del backend.
+- **Omar Anthony Gutiérrez Panebra**: Diseño visual del frontend.
+- **Luis Aguirre Luna**: Elaboración del README.
+
 
 ## 🎥 LINK DEL VIDEO DEMO
 
 https://drive.google.com/file/d/1-graPsizqE-hpCsmPLuwg6qYQsJrOsaG/view?usp=sharing
+
