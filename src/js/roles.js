@@ -29,12 +29,28 @@ async function cargarRoles() {
         <td>${rol.idRol}</td>
         <td>${rol.nombre}</td>
         <td>${new Date(rol.fechaCreacion).toLocaleDateString()}</td>
-        <td><span class="badge ${rol.estado ? 'bg-success' : 'bg-danger'}">
-          ${rol.estado ? 'Activo' : 'Inactivo'}
-        </span></td>
+        <td>
+          <span class="badge ${rol.estado ? 'bg-success' : 'bg-danger'}">
+            ${rol.estado ? 'Activo' : 'Inactivo'}
+          </span>
+        </td>
         <td class="action-btns">
-          <button class="btn btn-warning btn-sm" onclick="editarRol(${rol.idRol})"><i class="bi bi-pencil"></i> Editar</button>
-          <button class="btn btn-danger btn-sm" onclick="eliminarRol(${rol.idRol})"><i class="bi bi-trash"></i> Eliminar</button>
+          ${
+            rol.estado
+              ? `
+                <button class="btn btn-warning btn-sm" onclick="editarRol(${rol.idRol})">
+                  <i class="bi bi-pencil"></i> Editar
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="eliminarRol(${rol.idRol})">
+                  <i class="bi bi-trash"></i> Eliminar
+                </button>
+              `
+              : `
+                <button class="btn btn-success btn-sm" onclick="activarRol(${rol.idRol})">
+                  <i class="bi bi-check-circle"></i> Activar
+                </button>
+              `
+          }
         </td>
       `;
       tablaBody.appendChild(row);
@@ -58,136 +74,138 @@ async function cargarRoles() {
   }
 }
 
-// Función para agregar un nuevo rol
-document.getElementById("guardarRolBtn").addEventListener("click", async function (event) {
-  event.preventDefault();
-  const nombre = document.getElementById("rolNombre").value;
+document.getElementById("guardarRolBtn").addEventListener("click", async () => {
+  const nombre = document.getElementById("rolNombre").value.trim();
+  const estado = document.getElementById("rolEstado").value === "true";
 
-  const nuevoRol = {
-    nombre: nombre.trim(),
-    estado: false // Siempre insertar como inactivo
-  };
+  const token = localStorage.getItem("token");
+  if (!token || !nombre) return alert("Completa todos los campos.");
 
   try {
-    const token = localStorage.getItem("token");
-
-    const response = await fetch("http://localhost:3000/api/v1/roles", {
+    const res = await fetch("http://localhost:3000/api/v1/roles", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify(nuevoRol)
+      body: JSON.stringify({ nombre, estado })
     });
 
-    const resultado = await response.json();
-
-    if (response.ok) {
-      console.log("Rol insertado correctamente:", resultado);
+    const data = await res.json();
+    if (res.ok) {
+      document.getElementById("formNuevoRol").reset();
+      bootstrap.Modal.getInstance(document.getElementById("nuevoRolModal")).hide();
       cargarRoles();
-      const modal = bootstrap.Modal.getInstance(document.getElementById('nuevoRolModal'));
-      modal.hide();
     } else {
-      alert("Error al insertar: " + resultado?.mensaje || "Error desconocido");
+      alert(data.message || "No se pudo crear el rol.");
     }
   } catch (error) {
-    console.error("Error al insertar nuevo rol:", error);
-    alert("Error al insertar nuevo rol");
+    console.error("Error al crear rol:", error);
+    alert("Error al crear rol.");
   }
 });
 
-// Función para editar un rol
+// Editar rol (abrir modal con datos)
 function editarRol(idRol) {
-  console.log("ID recibido para editar:", idRol);
-
   fetch(`http://localhost:3000/api/v1/roles/${idRol}`, {
-    method: "GET",
     headers: {
-      'Authorization': `Bearer ${localStorage.getItem("token")}`,
-      'Content-Type': 'application/json'
+      Authorization: `Bearer ${localStorage.getItem("token")}`
     }
   })
-  .then(response => response.json())
-  .then(result => {
-    const data = result.data;
-    console.log("Datos del rol recibido:", data);
-
-    if (data && data.idRol) {
+    .then(res => res.json())
+    .then(({ data }) => {
       document.getElementById("rolId").value = data.idRol;
       document.getElementById("rolNombreEditar").value = data.nombre;
-      document.getElementById("rolEstadoEditar").value = data.estado.toString();
+      document.getElementById("rolEstadoEditar").value = data.estado;
+      document.getElementById("rolFechaEditar").value = data.fechaCreacion.split("T")[0];
 
-      const fechaCreacion = new Date(data.fechaCreacion);
-      const fechaFormateada = fechaCreacion.toISOString().split('T')[0];
-      document.getElementById("rolFechaEditar").value = fechaFormateada;
-
-      const modal = new bootstrap.Modal(document.getElementById('editarRolModal'));
+      const modal = new bootstrap.Modal(document.getElementById("editarRolModal"));
       modal.show();
-    } else {
-      console.error("Rol no encontrado.");
-    }
-  })
-  .catch(error => console.error("Error al cargar el rol:", error));
+    })
+    .catch(err => {
+      console.error("Error al cargar rol para editar:", err);
+      alert("No se pudo cargar el rol.");
+    });
 }
 
-// Función para guardar cambios de edición
-document.getElementById("guardarRolEditarBtn").addEventListener("click", async function (event) {
-  event.preventDefault();
-
+// Guardar cambios del rol editado
+document.getElementById("guardarRolEditarBtn").addEventListener("click", async () => {
   const id = document.getElementById("rolId").value;
   const nombre = document.getElementById("rolNombreEditar").value;
-  const estado = document.getElementById("rolEstadoEditar").value;
-
-  const datosEditados = {
-    nombre: nombre.trim(),
-    estado: estado === "true"
-  };
 
   try {
-    const token = localStorage.getItem("token");
-
-    const response = await fetch(`http://localhost:3000/api/v1/roles/${id}`, {
+    const res = await fetch(`http://localhost:3000/api/v1/roles/${id}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify(datosEditados)
+      body: JSON.stringify({ nombre })
     });
 
-    const resultado = await response.json();
-
-    if (response.ok) {
-      console.log("Rol actualizado correctamente:", resultado);
+    const data = await res.json();
+    if (res.ok) {
+      bootstrap.Modal.getInstance(document.getElementById("editarRolModal")).hide();
       cargarRoles();
-
-      const modal = bootstrap.Modal.getInstance(document.getElementById('editarRolModal'));
-      modal.hide();
-
     } else {
-      alert("Error al actualizar: " + resultado?.mensaje || "Error desconocido");
+      alert(data.message || "No se pudo actualizar el rol.");
     }
   } catch (error) {
-    console.error("Error al guardar cambios:", error);
-    alert("Error al guardar cambios");
+    console.error("Error al actualizar rol:", error);
+    alert("Error al actualizar.");
   }
 });
 
+// Eliminar rol
 function eliminarRol(idRol) {
-  if (confirm("¿Estás seguro de eliminar este rol?")) {
-    fetch(`http://localhost:3000/api/v1/roles/${idRol}`, {
-      method: "DELETE",
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem("token")}`,
-        'Content-Type': 'application/json'
+  if (!confirm("¿Deseas eliminar este rol?")) return;
+
+  fetch(`http://localhost:3000/api/v1/roles/${idRol}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  })
+    .then(res => res.json())
+    .then(result => {
+      if (result.success) {
+        cargarRoles();
+      } else {
+        alert("No se pudo eliminar el rol.");
       }
     })
-    .then(response => response.json())
-    .then(data => {
-      cargarRoles();
-    })
-    .catch(error => console.error("Error al eliminar el rol:", error));
-  }
+    .catch(error => {
+      console.error("Error al eliminar rol:", error);
+      alert("Error al eliminar.");
+    });
 }
 
-document.addEventListener('DOMContentLoaded', cargarRoles);
+function activarRol(idRol) {
+  if (!confirm("¿Deseas activar este rol?")) return;
+
+  const token = localStorage.getItem("token");
+
+  fetch(`http://localhost:3000/api/v1/roles/${idRol}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({ estado: true })
+  })
+    .then(res => res.json())
+    .then(result => {
+      if (result.success) {
+        cargarRoles();
+      } else {
+        alert("No se pudo activar el rol.");
+      }
+    })
+    .catch(error => {
+      console.error("Error al activar el rol:", error);
+      alert("Error al activar rol");
+    });
+}
+
+// ✅ Ejecutar automáticamente al cargar el archivo
+cargarRoles();
