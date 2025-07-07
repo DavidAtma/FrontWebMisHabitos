@@ -1,11 +1,9 @@
-// usuarios.js corregido con soporte completo para registrar y editar usuarios
-const API_URL = 'http://localhost:3000/api/v1/usuarios';
-
-// ✅ Cargar automáticamente usuarios
+// ✅ Cargar automáticamente al iniciar
 cargarUsuarios();
 
 async function cargarUsuarios() {
   try {
+    
     const token = localStorage.getItem('token');
     if (!token) throw new Error('No autenticado');
 
@@ -14,7 +12,7 @@ async function cargarUsuarios() {
 
     tablaBody.innerHTML = '<tr><td colspan="11" class="text-center">Cargando usuarios...</td></tr>';
 
-    const response = await fetch(API_URL, {
+    const response = await fetch('http://localhost:3000/api/v1/usuarios', {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -47,85 +45,37 @@ async function cargarUsuarios() {
           </span>
         </td>
         <td class="action-btns">
-          ${usuario.estado
-            ? `<button class="btn btn-warning btn-sm" onclick="editarUsuario(${usuario.idUsuario})">
-                <i class="bi bi-pencil"></i> Editar
-              </button>
-              <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(${usuario.idUsuario})">
-                <i class="bi bi-trash"></i> Eliminar
-              </button>`
-            : `<button class="btn btn-success btn-sm" onclick="activarUsuario(${usuario.idUsuario})">
-                <i class="bi bi-check-circle"></i> Activar
-              </button>`}
+          ${
+            usuario.estado
+              ? `
+                <button class="btn btn-warning btn-sm" onclick="editarUsuario(${usuario.idUsuario})">
+                  <i class="bi bi-pencil"></i> Editar
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(${usuario.idUsuario})">
+                  <i class="bi bi-trash"></i> Eliminar
+                </button>
+              `
+              : `
+                <button class="btn btn-success btn-sm" onclick="activarUsuario(${usuario.idUsuario})">
+                  <i class="bi bi-check-circle"></i> Activar
+                </button>
+              `
+          }
         </td>
       `;
       tablaBody.appendChild(row);
     });
-
   } catch (error) {
     console.error('Error al cargar usuarios:', error);
     const tablaBody = document.getElementById('tablaUsuariosBody');
     if (tablaBody) {
       tablaBody.innerHTML = `<tr><td colspan="11" class="text-center text-danger">${error.message}</td></tr>`;
     }
+
     if (error.message.includes('token') || error.message.includes('401')) {
       cerrarSesion?.();
     }
   }
-}
-
-function limpiarFormularioUsuario() {
-  document.getElementById("idUsuario").value = "";
-  document.getElementById("nombreUsuario").value = "";
-  document.getElementById("apellidoPaterno").value = "";
-  document.getElementById("apellidoMaterno").value = "";
-  document.getElementById("correoUsuario").value = "";
-  document.getElementById("contrasenaUsuario").value = "";
-  document.getElementById("fechaNacimiento").value = "";
-  document.getElementById("rolUsuario").value = "";
-  document.getElementById("estadoUsuario").value = "1";
-  document.getElementById("fotoPerfil").value = "";
-}
-
-document.getElementById("nuevoUsuarioBtn")?.addEventListener("click", function () {
-  limpiarFormularioUsuario();
-  const modal = new bootstrap.Modal(document.getElementById("modalEditarUsuario"));
-  modal.show();
-});
-
-function editarUsuario(idUsuario) {
-  const token = localStorage.getItem("token");
-
-  fetch(`${API_URL}/${idUsuario}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
-    }
-  })
-    .then(response => response.json())
-    .then(result => {
-      const u = result.data;
-      if (!u) throw new Error("Usuario no encontrado");
-
-      document.getElementById("idUsuario").value = u.idUsuario;
-      document.getElementById("nombreUsuario").value = u.nombre || "";
-      document.getElementById("apellidoPaterno").value = u.apellidoPaterno || "";
-      document.getElementById("apellidoMaterno").value = u.apellidoMaterno || "";
-      document.getElementById("correoUsuario").value = u.correo || "";
-      document.getElementById("contrasenaUsuario").value = ""; // No rellenar contraseña
-      document.getElementById("fechaNacimiento").value = u.fechaNacimiento?.split("T")[0] || "";
-      document.getElementById("rolUsuario").value = u.rol?.idRol || "";
-      document.getElementById("estadoUsuario").value = u.estado ? "1" : "0";
-      document.getElementById("fotoPerfil").value = u.fotoPerfil || "";
-
-      const modal = new bootstrap.Modal(document.getElementById("modalEditarUsuario"));
-      modal.show();
-    })
-    .catch(error => {
-      console.error("Error al cargar el usuario:", error);
-      alert("Ocurrió un error al obtener los datos del usuario.");
-    });
 }
 
 document.getElementById("guardarUsuarioBtn")?.addEventListener("click", async function () {
@@ -151,7 +101,7 @@ document.getElementById("guardarUsuarioBtn")?.addEventListener("click", async fu
   }
   if (id && payload.contrasena === "") delete payload.contrasena;
 
-  const url = id ? `${API_URL}/${id}` : API_URL;
+  const url = id ? `http://localhost:3000/api/v1/usuarios/${id}` : `http://localhost:3000/api/v1/usuarios`;
   const method = id ? "PUT" : "POST";
 
   try {
@@ -165,56 +115,100 @@ document.getElementById("guardarUsuarioBtn")?.addEventListener("click", async fu
     });
 
     const json = await res.json();
-    if (!res.ok) throw new Error(json.message || "Error al guardar usuario.");
+    console.log(json); // 👈 aquí verás el mensaje real del error en consola
 
-    cargarUsuarios();
-    const modal = bootstrap.Modal.getInstance(document.getElementById("modalEditarUsuario"));
-    modal.hide();
+    if (res.ok) {
+      cargarUsuarios();
+
+      // Ocultar modal correctamente después de agregar el usuario
+      const modalElement = document.getElementById("modalEditarUsuario");
+      const modalInstance = bootstrap.Modal.getInstance(modalElement);
+      if (modalInstance) modalInstance.hide(); // Cierra el modal después de éxito
+
+      limpiarFormularioUsuario(); // Limpia el formulario
+    } else {
+      alert(json.message || "Error al guardar usuario.");
+    }
   } catch (error) {
     console.error("Error al guardar usuario:", error);
     alert("Error al guardar usuario.");
   }
 });
 
-function eliminarUsuario(idUsuario) {
-  const token = localStorage.getItem("token");
-  if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
 
-  fetch(`${API_URL}/${idUsuario}`, {
-    method: "DELETE",
+
+// Editar usuario
+function editarUsuario(idUsuario) {
+  const token = localStorage.getItem("token");
+
+  fetch(`http://localhost:3000/api/v1/usuarios/${idUsuario}`, {
     headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
+      Authorization: `Bearer ${token}`
     }
   })
     .then(res => res.json())
-    .then(json => {
-      if (json.success) {
-        cargarUsuarios();
-      } else {
-        alert("Error al eliminar: " + json.message);
-      }
+    .then(({ data }) => {
+      document.getElementById("idUsuario").value = data.idUsuario;
+      document.getElementById("nombreUsuario").value = data.nombre;
+      document.getElementById("apellidoPaterno").value = data.apellidoPaterno;
+      document.getElementById("apellidoMaterno").value = data.apellidoMaterno;
+      document.getElementById("correoUsuario").value = data.correo;
+      document.getElementById("contrasenaUsuario").value = "";
+      document.getElementById("fechaNacimiento").value = data.fechaNacimiento?.split("T")[0] || "";
+      document.getElementById("rolUsuario").value = data.rol?.idRol || "";
+      document.getElementById("estadoUsuario").value = data.estado ? "1" : "0";
+      document.getElementById("fotoPerfil").value = data.fotoPerfil || "";
+
+      const modal = new bootstrap.Modal(document.getElementById("modalEditarUsuario"));
+      modal.show();
     })
-    .catch(err => {
-      console.error("Error al eliminar:", err);
-      alert("No se pudo eliminar el usuario.");
+    .catch(error => {
+      console.error("Error al cargar el usuario:", error);
+      alert("No se pudo cargar el usuario.");
     });
 }
 
+// Eliminar usuario
+function eliminarUsuario(idUsuario) {
+  if (!confirm("¿Estás seguro de eliminar este usuario?")) return;
+
+  fetch(`http://localhost:3000/api/v1/usuarios/${idUsuario}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
+    }
+  })
+    .then(res => res.json())
+    .then(result => {
+      if (result.success) {
+        cargarUsuarios();
+      } else {
+        alert("No se pudo eliminar el usuario.");
+      }
+    })
+    .catch(error => {
+      console.error("Error al eliminar usuario:", error);
+      alert("Error al eliminar.");
+    });
+}
+
+// Activar usuario
 function activarUsuario(idUsuario) {
+  if (!confirm("¿Deseas activar este usuario?")) return;
+
   const token = localStorage.getItem("token");
 
-  fetch(`${API_URL}/${idUsuario}`, {
+  fetch(`http://localhost:3000/api/v1/usuarios/${idUsuario}`, {
     method: "PUT",
     headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify({ estado: true })
   })
     .then(res => res.json())
-    .then(json => {
-      if (json.success) {
+    .then(result => {
+      if (result.success) {
         cargarUsuarios();
       } else {
         alert("No se pudo activar el usuario.");
@@ -224,6 +218,20 @@ function activarUsuario(idUsuario) {
       console.error("Error al activar usuario:", error);
       alert("Error al activar usuario.");
     });
+}
+
+// Mostrar modal para nuevo usuario
+document.getElementById("nuevoUsuarioBtn")?.addEventListener("click", () => {
+  limpiarFormularioUsuario();
+  const modal = new bootstrap.Modal(document.getElementById("modalEditarUsuario"));
+  modal.show();
+});
+
+// Limpiar formulario
+function limpiarFormularioUsuario() {
+document.getElementById("formEditarUsuario").reset();
+  document.getElementById("idUsuario").value = "";
+  document.getElementById("estadoUsuario").value = "1";
 }
 
 window.editarUsuario = editarUsuario;

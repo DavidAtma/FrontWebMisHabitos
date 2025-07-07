@@ -32,16 +32,18 @@ async function cargarModulo(modulo) {
 
   try {
    if (modulo === "dashboard") {
-  const moduloDiv = document.getElementById("modulo");
   const template = document.getElementById("dashboard-template");
-  if (!template || !moduloDiv) throw new Error("Contenido de dashboard no encontrado");
+  if (!template) throw new Error("Dashboard template no encontrado");
 
   moduloDiv.innerHTML = "";
   moduloDiv.appendChild(template.content.cloneNode(true));
 
-  if (typeof cargarResumenDashboard === "function") {
-    cargarResumenDashboard();
-  }
+  setTimeout(() => {
+    if (typeof cargarResumenDashboard === "function") {
+      cargarResumenDashboard();
+    }
+  }, 0);
+
   return;
 }
 
@@ -60,6 +62,13 @@ async function cargarModulo(modulo) {
     const script = document.createElement("script");
     script.id = `${modulo}-script`;
     script.src = `../js/${modulo}.js`;
+    script.onload = () => {
+      if (modulo === "usuarios" && typeof cargarUsuarios === "function") {
+        cargarUsuarios();
+      } else if (modulo === "roles" && typeof cargarRoles === "function") {
+        cargarRoles();
+      }
+    };
     script.onerror = () => {
       moduloDiv.innerHTML = `<div class="alert alert-danger">Error cargando módulo ${modulo}</div>`;
     };
@@ -71,7 +80,9 @@ async function cargarModulo(modulo) {
       <div class="alert alert-danger">Error: ${error.message}</div>
     `;
   }
-}
+} // ← Esta llave de cierre FALTABA en tu código
+
+
 
 
 
