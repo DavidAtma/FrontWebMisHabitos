@@ -1,13 +1,26 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Hábitos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+</head>
+<body>
 
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h3 class="mb-0">Gestión de Hábitos</h3>
-    <button id="nuevoHabitoBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalHabito">
-  <i class="bi bi-plus-circle"></i> Nuevo Hábito
-</button>
-
+    <div>
+      <button type="button" class="btn btn-outline-secondary me-2" onclick="cargarHabitos()">
+        <i class="bi bi-list-ul"></i> Cargar Hábitos
+      </button>
+      <!-- Cambié el evento de "Nuevo Hábito" para llamar a limpiarFormularioHabito -->
+      <button id="nuevoHabitoBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalHabito" onclick="limpiarFormularioHabito()">
+        <i class="bi bi-plus-circle"></i> Nuevo Hábito
+      </button>
+    </div>
   </div>
 
   <div class="table-responsive">
@@ -25,29 +38,8 @@
           <th>Acciones</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- Filas dinámicas aquí -->
-        <tr>
-          <td>1</td>
-          <td>Juan Pérez</td>
-          <td>Salud</td>
-          <td>Ejercicio</td>
-          <td>Correr 30 min</td>
-          <td>06:30</td>
-          <td>2024-06-25</td>
-          <td><span class="badge bg-success">Activo</span></td>
-          <td>
-            <button class="btn btn-sm btn-warning"
-              data-bs-toggle="modal"
-              data-bs-target="#modalHabito"
-              onclick="cargarDatosHabito(1, '1', '2', 'Ejercicio', 'Correr 30 min', '06:30', '1')">
-              <i class="bi bi-pencil-square"></i> Editar
-            </button>
-            <button class="btn btn-sm btn-danger" onclick="eliminarHabito(1)">
-              <i class="bi bi-trash-fill"></i> Eliminar
-            </button>
-          </td>
-        </tr>
+      <tbody id="tablaHabitosBody">
+        <!-- Las filas se llenarán dinámicamente con JS -->
       </tbody>
     </table>
   </div>
@@ -77,7 +69,6 @@
           <div class="mb-3">
             <label for="categoriaHabito" class="form-label">Categoría</label>
             <select id="categoriaHabito" class="form-select">
-              <!-- Opciones dinámicas -->
               <option value="1">Salud</option>
               <option value="2">Estudio</option>
             </select>
@@ -116,5 +107,8 @@
   </div>
 </div>
 
-<script src="../js/habitos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/habitos.js"></script>
+
+</body>
+</html>
