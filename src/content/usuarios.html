@@ -3,14 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <title>Gestión de Usuarios</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+  />
   <style>
-    table th, table td {
+    table th,
+    table td {
       text-align: center;
       vertical-align: middle;
     }
-    .table-bordered th, .table-bordered td {
+    .table-bordered th,
+    .table-bordered td {
       border: 1px solid #007bff !important;
     }
     .table thead th {
@@ -19,125 +27,175 @@
   </style>
 </head>
 <body>
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h3>Gestión de Usuarios</h3>
+      <button
+        class="btn btn-primary"
+        id="nuevoUsuarioBtn"
+        data-bs-toggle="modal"
+        data-bs-target="#modalEditarUsuario"
+      >
+        <i class="bi bi-person-plus"></i> Nuevo Usuario
+      </button>
+    </div>
 
-<div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Gestión de Usuarios</h3>
-    <div>
-     
-      <button class="btn btn-primary" id="nuevoUsuarioBtn" data-bs-toggle="modal" data-bs-target="#modalEditarUsuario">
-  <i class="bi bi-person-plus"></i> Nuevo Usuario
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover align-middle">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido Paterno</th>
+            <th>Apellido Materno</th>
+            <th>Correo</th>
+            <th>Contraseña</th>
+            <th>Rol</th>
+            <th>Fecha Nacimiento</th>
+            <th>Fecha Creación</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaUsuariosBody">
+          <tr>
+            <td colspan="11" class="text-center">Cargando usuarios...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Registrar / Editar -->
+  <div
+    class="modal fade"
+    id="modalEditarUsuario"
+    tabindex="-1"
+    aria-labelledby="modalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <form id="formEditarUsuario">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">
+              Registrar / Editar Usuario
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Cerrar"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="idUsuario" />
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="nombreUsuario"
+                  required
+                />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Apellido Paterno</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="apellidoPaterno"
+                />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Apellido Materno</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="apellidoMaterno"
+                />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Correo</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="correoUsuario"
+                  required
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label">Contraseña</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="contrasenaUsuario"
+                />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Fecha de Nacimiento</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="fechaNacimiento"
+                />
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Rol</label>
+                <select class="form-select" id="rolUsuario">
+                  <option value="1">Administrador</option>
+                  <option value="2">Usuario</option>
+                  <option value="3">Editor</option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label">Estado</label>
+                <select class="form-select" id="estadoUsuario">
+                  <option value="1">Activo</option>
+                  <option value="0">Inactivo</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Foto de Perfil (URL)</label>
+              <input
+                type="text"
+                class="form-control"
+                id="fotoPerfil"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+<button type="button" id="guardarUsuarioBtn" class="btn btn-primary">
+  Guardar
 </button>
 
+
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
-  <div class="table-responsive">
-    <table class="table table-bordered table-hover align-middle">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Apellido Paterno</th>
-          <th>Apellido Materno</th>
-          <th>Correo</th>
-          <th>Contraseña</th>
-          <th>Rol</th>
-          <th>Fecha Nacimiento</th>
-          <th>Fecha Creación</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody id="tablaUsuariosBody">
-        <tr><td colspan="11" class="text-center">Cargando usuarios...</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="modalEditarUsuario" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-<form id="formEditarUsuario">
-        <div class="modal-header">
-          <h5 class="modal-title" id="modalLabel">Registrar / Editar Usuario</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" id="idUsuario">
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Nombre</label>
-              <input type="text" class="form-control" id="nombreUsuario" required>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Apellido Paterno</label>
-              <input type="text" class="form-control" id="apellidoPaterno">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Apellido Materno</label>
-              <input type="text" class="form-control" id="apellidoMaterno">
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label">Correo</label>
-              <input type="email" class="form-control" id="correoUsuario" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label">Contraseña</label>
-              <input type="password" class="form-control" id="contrasenaUsuario">
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Fecha de Nacimiento</label>
-              <input type="date" class="form-control" id="fechaNacimiento">
-            </div>
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Rol</label>
-              <select class="form-select" id="rolUsuario">
-                <option value="1">Administrador</option>
-                <option value="2">Usuario</option>
-                <option value="3">Editor</option>
-              </select>
-            </div>
-            <div class="col-md-4 mb-3">
-              <label class="form-label">Estado</label>
-              <select class="form-select" id="estadoUsuario">
-                <option value="1">Activo</option>
-                <option value="0">Inactivo</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label">Foto de Perfil (URL)</label>
-            <input type="text" class="form-control" id="fotoPerfil">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" id="guardarUsuarioBtn" class="btn btn-primary">Guardar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- Bootstrap JS -->
+  <!-- Bootstrap JS + tu script de usuarios -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-  function limpiarFormulario() {
-    document.getElementById("formUsuario").reset();
-    document.getElementById("idUsuario").value = "";
-  }
-</script>
+<script src="js/usuarios.js"></script>
 
 </body>
 </html>
