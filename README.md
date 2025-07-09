@@ -33,19 +33,6 @@ El BackOffice Web incluye funcionalidades de administración para las entidades 
 
 ---
 
-## 📁 Estructura del Proyecto
-
-HabitFlow-BackOffice/
-├── src/
-│ ├── html/ # Formulario de login, registro
-│ ├── content/ # Módulos de gestión: hábitos, usuarios, etc.
-│ ├── css/ # Estilos base y específicos por página
-│ ├── js/ # Scripts de conexión con API y lógica de interfaz
-│ └── main-gest.html # Vista principal del sistema una vez logueado
-├── README.md
-
----
-
 ## 🖱️ Funcionalidades Principales
 
 | Módulo                     | Descripción                                           |
