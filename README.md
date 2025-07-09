@@ -82,7 +82,4 @@ Todos los datos se obtienen en tiempo real desde la API del backend.
 - **Luis Aguirre Luna**: Elaboración del README.
 
 
-## 🎥 LINK DEL VIDEO DEMO
-
-https://drive.google.com/file/d/1-graPsizqE-hpCsmPLuwg6qYQsJrOsaG/view?usp=sharing
 
